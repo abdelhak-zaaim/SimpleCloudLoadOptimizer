@@ -1,6 +1,8 @@
 package com.load.balancer;
 
-public class Cloudlet {
+import java.io.Serializable;
+
+public class Cloudlet implements Serializable {
     private int id;
     private double length;
     private double deadline;
