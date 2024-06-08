@@ -11,23 +11,42 @@ import java.util.Random;
  * hna 3andna un client y3ayet l Load Balancer
  * hada just pour tester
  */
+
 public class Test {
    public static void main(String[] args) {
-      try (Socket socket = new Socket("localhost", 8080);
-           ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream())) {
+      Socket socket = null;
+      ObjectOutputStream oos = null;
+      try {
+         socket = new Socket("localhost", 8080);
+         if (socket.isConnected()) {
+            oos = new ObjectOutputStream(socket.getOutputStream());
 
-         Random rand = new Random();
-         for (int i = 1; i <= 5; i++) {
-            double length = rand.nextDouble() * 1000;
-            double deadline = rand.nextDouble() * 10;
-            Cloudlet cloudlet = new Cloudlet(i, length, deadline, rand.nextDouble() * 10);
+            Random rand = new Random();
+            for (int i = 1; i <= 5; i++) {
+               double length = rand.nextDouble() * 1000;
+               double deadline = rand.nextDouble() * 10;
+               Cloudlet cloudlet = new Cloudlet(i, length, deadline, rand.nextDouble() * 10);
 
-            oos.writeObject(cloudlet);
-            System.out.println("Sent: " + cloudlet);
+               oos.writeObject(cloudlet);
+               System.out.println("Sent: " + cloudlet);
+            }
+         } else {
+            System.out.println("Socket is not connected.");
          }
 
       } catch (IOException e) {
          e.printStackTrace();
+      } finally {
+         try {
+            if (oos != null) {
+               oos.close();
+            }
+            if (socket != null) {
+               socket.close();
+            }
+         } catch (IOException e) {
+            e.printStackTrace();
+         }
       }
    }
 }
